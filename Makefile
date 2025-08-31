@@ -1,6 +1,7 @@
 # variables
 CC := g++
-CFLAGS := -Wall -Wpedantic -g -Iinclude
+CFLAGS := -Wall -Wpedantic -Iinclude -O3
+LLVMCONFIG := `llvm-config --cxxflags --ldflags --system-libs --libs core orcjit native`
 BINARY := build/bin
 
 # makefile functions are called with $(function <arguments>)
@@ -23,7 +24,7 @@ all: build $(OBJECT_FILES) $(BINARY)
 
 # $^ is an automatic variable that expands to the whole dependency 
 $(BINARY): $(OBJECT_FILES)
-	$(CC) $(CFLAGS) -o $(BINARY) $^
+	$(CC) $(CFLAGS)  $^ $(LLVMCONFIG) -o $(BINARY)
 
 build:
 	mkdir -p build
