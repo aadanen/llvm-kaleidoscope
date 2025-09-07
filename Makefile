@@ -1,6 +1,6 @@
 # variables
 CC := g++
-CFLAGS := -Wall -Wpedantic -Iinclude -O3
+CFLAGS := -Wall -Wpedantic -Iinclude -O3 -rdynamic
 LLVMCONFIG := `llvm-config --cxxflags --ldflags --system-libs --libs core orcjit native`
 BINARY := build/bin
 
