@@ -1,8 +1,9 @@
 # variables
-CC := g++
-CFLAGS := -Wall -Wpedantic -Iinclude -O3 -rdynamic
+CC := clang++
+CFLAGS := -Wall -Wpedantic -Iinclude -O3
+LDFLAGS := -rdynamic
 LLVMCONFIG := `llvm-config --cxxflags --ldflags --system-libs --libs core orcjit native`
-BINARY := build/bin
+BINARY := build/kalos
 
 # makefile functions are called with $(function <arguments>)
 # wildcard allows a string with anything substituted for the *
@@ -24,7 +25,7 @@ all: build $(OBJECT_FILES) $(BINARY)
 
 # $^ is an automatic variable that expands to the whole dependency 
 $(BINARY): $(OBJECT_FILES)
-	$(CC) $(CFLAGS)  $^ $(LLVMCONFIG) -o $(BINARY)
+	$(CC) $(CFLAGS) $(LDFLAGS) $^ $(LLVMCONFIG) -o $(BINARY)
 
 build:
 	mkdir -p build
