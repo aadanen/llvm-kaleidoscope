@@ -22,6 +22,8 @@
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
+#include <filesystem>
+#include <fstream>
 #include <lexer.h>
 #include <map>
 #include <memory>
@@ -143,7 +145,9 @@ void HandleTopLevelExpression() {
 /// top ::= definition | external | expression | ';'
 void MainLoop() {
   while (true) {
-    fprintf(stderr, "ready> ");
+    if (USE_REPL) {
+      fprintf(stderr, "ready> ");
+    }
     switch (CurTok) {
     case tok_eof:
       return;
@@ -185,7 +189,7 @@ extern "C" DLLEXPORT double printd(double X) {
   return 0;
 }
 
-void printVersion(raw_ostream &out) { out << "1.0"; }
+void printVersion(raw_ostream &out) { out << "Kalos Version 1.0\n"; }
 //===----------------------------------------------------------------------===//
 // Main driver code.
 //===----------------------------------------------------------------------===//
@@ -194,14 +198,20 @@ int main(int argc, char **argv) {
   cl::SetVersionPrinter(printVersion);
   cl::OptionCategory KalosCategory(
       "Kalos Options", "Options for controlling the compilation process");
-  cl::opt<std::string> InputFilename(cl::Positional, cl::desc("[input files]"),
-                                     cl::init("-"), cl::ZeroOrMore,
-                                     cl::cat(KalosCategory));
-  cl::opt<std::string> OutputFilename("o", cl::desc("specify output filename"),
-                                      cl::value_desc("filename"), cl::Optional,
-                                      cl::cat(KalosCategory));
+  cl::opt<std::string> OutputFilename(
+      "o", cl::desc("specify output filename"), cl::value_desc("filename"),
+      cl::Optional, cl::cat(KalosCategory), cl::init("a.out"));
+  cl::list<std::string> InputFilenames(cl::Positional,
+                                       cl::desc("[input files]"),
+                                       cl::ZeroOrMore, cl::cat(KalosCategory));
   cl::HideUnrelatedOptions(KalosCategory);
   cl::ParseCommandLineOptions(argc, argv, "Kalos\n");
+
+  if (InputFilenames.end() > InputFilenames.begin()) {
+    USE_REPL = false;
+  } else {
+    USE_REPL = true;
+  }
 
   InitializeNativeTarget();
   InitializeNativeTargetAsmPrinter();
@@ -216,9 +226,18 @@ int main(int argc, char **argv) {
   BinopPrecedence['*'] = 40; // highest.
 
   // Prime the first token.
-  fprintf(stderr, "ready> ");
-  getNextToken();
+  if (USE_REPL) {
+    fprintf(stderr, "ready> ");
+  } else {
+    // for now only compile the first file
+    std::string fname = *(InputFilenames.begin());
+    std::ifstream f(fname);
+    auto sz = std::filesystem::file_size(fname);
+    source.resize(sz);
 
+    f.read(&source[0], sz);
+  }
+  getNextToken();
   TheJIT = ExitOnErr(KaleidoscopeJIT::Create());
 
   InitializeModuleAndManagers();
