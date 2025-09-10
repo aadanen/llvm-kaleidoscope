@@ -1,6 +1,6 @@
 # variables
 CC := clang++
-CFLAGS := -Wall -Wpedantic -Iinclude
+CFLAGS := -Wall -Wpedantic -Iinclude -fno-rtti
 LDFLAGS := -rdynamic
 LLVMCONFIG := `llvm-config --cxxflags --ldflags --system-libs --libs core orcjit native`
 BINARY := build/kalos

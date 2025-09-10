@@ -5,6 +5,7 @@
 #include "llvm/Passes/PassBuilder.h"
 #include "llvm/Passes/StandardInstrumentations.h"
 #include "llvm/Support/TargetSelect.h"
+#include "llvm/Support/raw_ostream.h"
 #include "llvm/Target/TargetMachine.h"
 #include "llvm/Transforms/InstCombine/InstCombine.h"
 #include "llvm/Transforms/Scalar.h"
@@ -112,8 +113,9 @@ void HandleTopLevelExpression() {
   // Evaluate a top-level expression into an anonymous function.
   if (auto FnAST = ParseTopLevelExpr()) {
     if (FnAST->codegen()) {
-      // Create a ResourceTracker to track JIT'd memory allocated to our
-      // anonymous expression -- that way we can free it after executing.
+      // Create a ResourceTracker to track JIT'd memory
+      // allocated to our anonymous expression -- that way we
+      // can free it after executing.
       auto RT = TheJIT->getMainJITDylib().createResourceTracker();
 
       auto TSM = ThreadSafeModule(std::move(TheModule), std::move(TheContext));
@@ -123,8 +125,9 @@ void HandleTopLevelExpression() {
       // Search the JIT for the __anon_expr symbol.
       auto ExprSymbol = ExitOnErr(TheJIT->lookup("__anon_expr"));
 
-      // Get the symbol's address and cast it to the right type (takes no
-      // arguments, returns a double) so we can call it as a native function.
+      // Get the symbol's address and cast it to the right
+      // type (takes no arguments, returns a double) so we can
+      // call it as a native function.
       double (*FP)() = ExprSymbol.toPtr<double (*)()>();
       fprintf(stderr, "Evaluated to %f\n", FP());
 
@@ -182,11 +185,24 @@ extern "C" DLLEXPORT double printd(double X) {
   return 0;
 }
 
+void printVersion(raw_ostream &out) { out << "1.0"; }
 //===----------------------------------------------------------------------===//
 // Main driver code.
 //===----------------------------------------------------------------------===//
 
 int main(int argc, char **argv) {
+  cl::SetVersionPrinter(printVersion);
+  cl::OptionCategory KalosCategory(
+      "Kalos Options", "Options for controlling the compilation process");
+  cl::opt<std::string> InputFilename(cl::Positional, cl::desc("[input files]"),
+                                     cl::init("-"), cl::ZeroOrMore,
+                                     cl::cat(KalosCategory));
+  cl::opt<std::string> OutputFilename("o", cl::desc("specify output filename"),
+                                      cl::value_desc("filename"), cl::Optional,
+                                      cl::cat(KalosCategory));
+  cl::HideUnrelatedOptions(KalosCategory);
+  cl::ParseCommandLineOptions(argc, argv, "Kalos\n");
+
   InitializeNativeTarget();
   InitializeNativeTargetAsmPrinter();
   InitializeNativeTargetAsmParser();
