@@ -11,7 +11,10 @@
 /// token the parser is looking at.  getNextToken reads another token from the
 /// lexer and updates CurTok with its results.
 int CurTok;
-int getNextToken() { return CurTok = gettok(); }
+int getNextToken() {
+  CurTok = gettok();
+  return CurTok;
+}
 
 /// BinopPrecedence - This holds the precedence for each binary operator that is
 /// defined.

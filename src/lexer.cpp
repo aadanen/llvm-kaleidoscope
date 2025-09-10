@@ -12,7 +12,11 @@ int getNextCharacter() {
   if (USE_REPL) {
     return getchar();
   } else {
-    return idx < source.size() ? source[idx++] : EOF;
+    if (idx < source.size()) {
+      return source[idx++];
+    } else {
+      return EOF;
+    }
   }
 }
 //===----------------------------------------------------------------------===//

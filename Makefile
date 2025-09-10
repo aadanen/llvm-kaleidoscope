@@ -1,8 +1,8 @@
 # variables
 CC := clang++
-CFLAGS := -Wall -Wpedantic -Iinclude -fno-rtti
+CFLAGS := -Wall -Wpedantic -Iinclude -fno-rtti -g
 LDFLAGS := -rdynamic
-LLVMCONFIG := `llvm-config --cxxflags --ldflags --system-libs --libs core orcjit native`
+LLVMCONFIG := `llvm-config --cxxflags --ldflags --system-libs --libs all`
 BINARY := build/kalos
 
 # makefile functions are called with $(function <arguments>)
