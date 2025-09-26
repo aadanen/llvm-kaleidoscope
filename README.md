@@ -1,5 +1,5 @@
 # Kalos
-An interpretation of the LLVM's kaleidoscope tutorial currently being expanded with addition features.
+An interpretation of the LLVM kaleidoscope tutorial currently being expanded with addition features.
 
 # Additional Features
 - Improved the legibility of the codebase and reduced build times by refactoring the project into multiple files
