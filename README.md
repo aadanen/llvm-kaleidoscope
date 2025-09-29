@@ -1,6 +1,9 @@
 # Kalos
 An interpretation of the LLVM kaleidoscope tutorial currently being expanded with addition features.
 
+## Dependencies
+a system install of llvm
+
 ## Example
 ```
 # compile kalos
