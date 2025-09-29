@@ -1,4 +1,5 @@
 #include <lexer.h>
+#include <memory>
 #include <parser.h>
 #include <string>
 #include <unordered_map>
@@ -408,4 +409,33 @@ std::unique_ptr<FunctionAST> ParseTopLevelExpr() {
 std::unique_ptr<PrototypeAST> ParseExtern() {
   getNextToken(); // eat extern.
   return ParsePrototype();
+}
+
+/// global variable ::= 'global' Identifier = expr
+std::unique_ptr<GlobalAST> ParseGlobal() {
+  // eat 'global'
+  getNextToken();
+  std::string name;
+  if (CurTok == tok_identifier) {
+    // record and then eat the name;
+    name = IdentifierStr;
+    getNextToken();
+  } else {
+    return nullptr;
+  }
+
+  if (CurTok == '=') {
+    // eat the =
+    getNextToken();
+  } else {
+    return nullptr;
+  }
+
+  if (CurTok == tok_number) {
+    double temp = NumVal;
+    getNextToken();
+    return std::make_unique<GlobalAST>(std::move(name), std::move(temp));
+  } else {
+    return nullptr;
+  }
 }

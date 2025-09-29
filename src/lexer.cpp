@@ -39,6 +39,8 @@ int gettok() {
       return tok_def;
     if (IdentifierStr == "extern")
       return tok_extern;
+    if (IdentifierStr == "global")
+      return tok_global;
     if (IdentifierStr == "if")
       return tok_if;
     if (IdentifierStr == "then")

@@ -21,9 +21,8 @@ public:
 
 /// NumberExprAST - Expression class for numeric literals like "1.0".
 class NumberExprAST : public ExprAST {
-  double Val;
-
 public:
+  double Val;
   NumberExprAST(double Val) : Val(Val) {}
 
   Value *codegen() override;
@@ -159,5 +158,17 @@ public:
       : Proto(std::move(Proto)), Body(std::move(Body)) {}
 
   Function *codegen();
+};
+
+class GlobalAST {
+  std::string gvName;
+  double initialValue;
+
+public:
+  GlobalAST(const std::string &Name, double IV)
+      : gvName(Name), initialValue(IV) {}
+
+  bool codegen();
+  const std::string &getName() const { return gvName; }
 };
 #endif

@@ -10,24 +10,25 @@ enum Token {
   // commands
   tok_def = -2,
   tok_extern = -3,
+  tok_global = -4,
 
   // primary
-  tok_identifier = -4,
-  tok_number = -5,
+  tok_identifier = -5,
+  tok_number = -6,
 
   // control
-  tok_if = -6,
-  tok_then = -7,
-  tok_else = -8,
-  tok_for = -9,
-  tok_in = -10,
+  tok_if = -7,
+  tok_then = -8,
+  tok_else = -9,
+  tok_for = -10,
+  tok_in = -11,
 
   // operators
-  tok_binary = -11,
-  tok_unary = -12,
+  tok_binary = -12,
+  tok_unary = -13,
 
   // var definition
-  tok_var = -13
+  tok_var = -14
 };
 
 extern std::string IdentifierStr; // Filled in if tok_identifier

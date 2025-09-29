@@ -125,6 +125,21 @@ void HandleExtern() {
   }
 }
 
+void HandleGlobal() {
+  if (auto gv = ParseGlobal()) {
+    if (auto *GIR = gv->codegen()) {
+      if (!GENERATE_OBJECT_FILE) {
+        fprintf(stderr, "Read global: ");
+        GIR->print(errs());
+        fprintf(stderr, "\n");
+      }
+    }
+  } else {
+    // Skip token for error recovery.
+    getNextToken();
+  }
+}
+
 void HandleTopLevelExpression() {
   // Evaluate a top-level expression into an anonymous function.
   if (auto FnAST = ParseTopLevelExpr()) {
@@ -176,6 +191,9 @@ void MainLoop() {
       break;
     case tok_extern:
       HandleExtern();
+      break;
+    case tok_global:
+      HandleGlobal();
       break;
     default:
       HandleTopLevelExpression();

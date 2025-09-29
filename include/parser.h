@@ -76,4 +76,7 @@ std::unique_ptr<FunctionAST> ParseDefinition();
 
 /// external ::= 'extern' prototype
 std::unique_ptr<PrototypeAST> ParseExtern();
+
+/// global variable ::= 'global' Identifier = expr
+std::unique_ptr<GlobalAST> ParseGlobal();
 #endif /* PARSER_H_ */

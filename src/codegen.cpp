@@ -4,6 +4,7 @@
 #include "llvm/IR/Constants.h"
 #include "llvm/IR/DerivedTypes.h"
 #include "llvm/IR/Function.h"
+#include "llvm/IR/GlobalVariable.h"
 #include "llvm/IR/IRBuilder.h"
 #include "llvm/IR/Instructions.h"
 #include "llvm/IR/LLVMContext.h"
@@ -24,6 +25,7 @@
 #include "llvm/Transforms/Utils/Mem2Reg.h"
 #include <ast.h>
 #include <codegen.h>
+#include <memory>
 
 using namespace llvm;
 
@@ -386,6 +388,20 @@ Function *PrototypeAST::codegen() {
     Arg.setName(Args[Idx++]);
 
   return F;
+}
+
+bool GlobalAST::codegen() {
+  if (TheModule->getGlobalVariable(gvName)) {
+    LogErrorV("Redeclaration of global variable.");
+    return false;
+  } else {
+    double v = initialValue->Val;
+    GlobalVariable *gv =
+        new GlobalVariable(*TheModule, Type::getDoubleTy(*TheContext), false,
+                           GlobalValue::ExternalLinkage,
+                           ConstantFP::get(*TheContext, APFloat(v)), gvName);
+    return true;
+  }
 }
 
 Function *FunctionAST::codegen() {
