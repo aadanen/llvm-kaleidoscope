@@ -1,6 +1,19 @@
 # Kalos
 An interpretation of the LLVM kaleidoscope tutorial currently being expanded with addition features.
 
+## Example
+```
+# compile kalos
+make
+
+# compile a kaleidoscope file to an object file
+./build/kalos kl/mandel.kl -o mandel.o
+
+# use a c++ compiler to create an executable
+clang++ kl/mandel.o kl/main.cpp
+./a.out
+```
+
 ## Additional Features
 - Improved the legibility of the codebase and reduced build times by refactoring the project into multiple files
 - Added command line options to let users choose how they want to interact with the language
